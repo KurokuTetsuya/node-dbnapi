@@ -16,9 +16,14 @@ export class Request implements RequestClass {
   public url: string
   public version: string
   public headers: any
+  /**
+   * @constructor
+   * @param {String} url
+   * @param {RequestHeaders} headers
+   */
   constructor(url: string, headers: RequestHeaders = {}) {
     this.url = url
-    this.version = meta.default.value
+    this.version = meta.default.version
     if (!headers) {
       headers = {
         'Content-Type': 'application/json',
@@ -29,8 +34,8 @@ export class Request implements RequestClass {
 
   /**
    * Creates a POST request.
-   * @param {string} endpoint resolved API Endpoint.
-   * @param {json} data resolved data to write.
+   * @param {String} endpoint resolved API Endpoint.
+   * @param {JSON} data resolved data to write.
    * @private
    * @returns {Promise<ResponsePost>}
    */
@@ -53,7 +58,7 @@ export class Request implements RequestClass {
 
   /**
    * Creates a GET request.
-   * @param {string} endpoint resolved API Endpoint.
+   * @param {String} endpoint resolved API Endpoint.
    * @private
    * @returns {Promise<ResponseGet>}
    */

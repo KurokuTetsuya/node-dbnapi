@@ -1,6 +1,10 @@
 {
   "name": "node-dbnapi",
   "version": "1.0.0",
+  "scripts": {
+    "gulp:lint": "gulp tslint",
+    "lint": "npm run gulp:lint -s"
+  },
   "main": "index.js",
   "license": "MIT",
   "devDependencies": {

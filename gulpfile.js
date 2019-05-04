@@ -42,7 +42,7 @@ gulp.task('docs', gulp.series(gulp.parallel('tslint'), (done) => {
   })
 }))
 
-gulp.task('webpack', gulp.series(gulp.parallel('lint'), (done) => {
+gulp.task('webpack', gulp.series(gulp.parallel('tslint'), (done) => {
   const spinner = gangsing('building for production...')
   spinner.start()
   rm(webpackConfig.output.path, (err) => {
