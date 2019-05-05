@@ -1,4 +1,4 @@
-import { RequestClass } from "./IRequestClass";
+import { RequestClass } from './IRequestClass'
 
 export interface MainClass {
   request: RequestClass

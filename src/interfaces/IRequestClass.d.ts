@@ -9,6 +9,7 @@ export interface RequestClass {
 }
 
 export interface ResponseGet {
+  body: any
   Response: Response
   ResponseType: ResponseType
   Credential: RequestCredentials
@@ -23,8 +24,8 @@ export interface ResponsePost {
 
 export type RequestHeaders = Headers | string[][] | { [key: string]: string }
 
-export interface User {
-  id: String,
+export interface IUser {
+  id: String
   username: String
   discriminator: String
   tag: String
@@ -33,7 +34,8 @@ export interface User {
   displayAvatarURL: String
   bot: Boolean
   createdTimestamp: Number
-  bots: Array<ArrayBot>
+  createdAt: Object
+  bots?: Array<ArrayBot>
 }
 
 export interface ArrayBot {
@@ -44,11 +46,7 @@ export interface ArrayBot {
   claimed: Boolean
 }
 
-export interface OwnedBy {
-  
-}
-
-export interface Bot {
+export interface IBot {
   id: String
   username: String
   discriminator: String
@@ -58,5 +56,6 @@ export interface Bot {
   displayAvatarURL: String
   bot: Boolean
   createdTimestamp: Number
-  ownedBy: 
+  createdAt: Object
+  ownedBy: IUser
 }

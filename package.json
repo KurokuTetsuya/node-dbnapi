@@ -2,8 +2,11 @@
   "name": "node-dbnapi",
   "version": "1.0.0",
   "scripts": {
+    "prepare": "tsc",
     "gulp:lint": "gulp tslint",
-    "lint": "npm run gulp:lint -s"
+    "lint": "npm run gulp:lint -s",
+    "gulp:webpack": "gulp webpack",
+    "webpack": "npm run gulp:webpack -s"
   },
   "main": "index.js",
   "license": "MIT",

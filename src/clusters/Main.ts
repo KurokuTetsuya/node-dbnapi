@@ -1,7 +1,8 @@
 import { MainClass } from '../interfaces/IMainClass'
-import { RequestHeaders } from '../interfaces/IRequestClass'
+import { RequestHeaders, IUser, IBot } from '../interfaces/IRequestClass'
 import { Request } from '../api/Request'
 import meta from '../../package.json'
+import { User } from './User';
 
 /**
  * Main module, the source of Discord Bots Nation API workflow.
@@ -15,9 +16,9 @@ export class Main implements MainClass {
   public token: string
   public clientid: string
   public ownerid: string
-  public version: string = meta.default.version
+  public version: string = meta.version
   constructor(token: string, clientid: string, ownerid: string) {
-    const header: RequestHeaders = {'Content-Type': 'application/json', 'User-Agent': `dbnapi.js/${this.version}`}
+    const header: RequestHeaders = {'Content-Type': 'application/json', 'User-Agent': `dbnapi/${this.version}`}
     this.request = new Request('https://discordbots.xyz/api', header)
     this.token = token
     this.clientid = clientid
@@ -50,8 +51,27 @@ export class Main implements MainClass {
     if (!clientID) { throw new Error('INVALID_OWNER_ID_NULL')}
     const { body: user } = await this.request.get(`fetchUser?id=${clientID}`)
     if (user.error === 'unknown_user') { return undefined }
-    let userResolved = null
-    const body = user
+    if (user.bot === true) {
+      const body: IBot = user
+      const userResolved: IBot = {
+        id: body.id,
+        username: body.username,
+// tslint:disable-next-line: object-literal-sort-keys
+        discriminator: body.discriminator,
+        tag: body.tag,
+        avatar: body.avatar,
+        avatarURL: body.avatarURL,
+        displayAvatarURL: body.displayAvatarURL,
+        bot: body.bot,
+        createdTimestamp: body.createdTimestamp,
+        createdAt: new Date(body.createdTimestamp.toString()),
+        ownedBy: body.ownedBy,
+      }
+
+      return new User(userResolved)
+    }
+    let userResolved: IUser
+    const body: IUser = user
 
     userResolved = {
         id: body.id,
@@ -63,9 +83,9 @@ export class Main implements MainClass {
         avatarURL: body.avatarURL,
         displayAvatarURL: body.displayAvatarURL,
         bot: body.bot,
-        createdAt: new Date(body.createdTimestamp),
+        createdAt: new Date(body.createdTimestamp.toString()),
         createdTimestamp: body.createdTimestamp,
-    } 
+    }
 
     if (user.bot === true || body.bot === true) { userResolved.ownedBy = body.ownedBy }
     // tslint:disable-next-line: one-line

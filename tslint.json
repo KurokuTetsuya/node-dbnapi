@@ -8,6 +8,10 @@
     "semicolon": [true, "never"],
     "ordered-imports": false,
     "align": false,
-    "quotemark": [true, "single", "avoid-escape", "avoid-template"]
+    "quotemark": [true, "single", "avoid-escape", "avoid-template"],
+    "array-type": false,
+    "no-empty": false,
+    "interface-name": false,
+    "ban-types": true
   }
 }
