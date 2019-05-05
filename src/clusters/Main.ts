@@ -4,6 +4,7 @@ import { Request } from '../api/Request'
 import meta from '../../package.json'
 import { User } from './User'
 import { Bot } from './Bot'
+import { ErrCode } from '../errors/Error'
 
 /**
  * Main module, the source of Discord Bots Nation API workflow.

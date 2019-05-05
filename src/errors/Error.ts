@@ -10,18 +10,16 @@ const errnoList = {
   200: 'OK',
 }
 
-function throwError(Base: ErrorConstructor): RequestError {
-  return class ErrCode extends Base implements RequestError {
-    public name: string
-    public code: string
-    public errno: number
-    constructor(key: String, ...args: Array<String>) {
-      const body = messages(key, args)
-      super(body.content)
-      this.name = header
-      this.code = body.content
-      this.errno = body.errno
-    }
+export class ErrCode extends Base implements RequestError {
+  public name: string
+  public code: string
+  public errno: number
+  constructor(key: String, ...args: Array<String>) {
+    const body = messages(key, args)
+    super(body.content)
+    this.name = header
+    this.code = body.content
+    this.errno = body.errno
   }
 }
 
@@ -52,8 +50,4 @@ function messages(key: String, args: Array<String>): ResolvedError {
 
 export function register(sym: string, val: string): void {
   listOfMessages.set(sym, typeof val === 'function' ? val : String(val))
-}
-
-exports = {
-  ErrCode: throwError(Error),
 }
