@@ -10,7 +10,7 @@ const errnoList = {
   200: 'OK',
 }
 
-export class ErrCode extends Base implements RequestError {
+export class ErrCode extends Error implements RequestError {
   public name: string
   public code: string
   public errno: number
