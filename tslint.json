@@ -12,6 +12,7 @@
     "array-type": false,
     "no-empty": false,
     "interface-name": false,
-    "ban-types": true
+    "ban-types": true,
+    "no-shadowed-variable": false
   }
 }

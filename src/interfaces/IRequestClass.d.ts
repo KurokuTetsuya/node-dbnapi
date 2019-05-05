@@ -57,5 +57,5 @@ export interface IBot {
   bot: Boolean
   createdTimestamp: Number
   createdAt: Object
-  ownedBy: IUser
+  ownedBy?: IUser
 }

@@ -50,9 +50,10 @@ function messages(key: String, args: Array<String>): ResolvedError {
   return resolved
 }
 
+export function register(sym: string, val: string): void {
+  listOfMessages.set(sym, typeof val === 'function' ? val : String(val))
+}
+
 exports = {
-  Error: throwError(Error),
-  TypeError: throwError(TypeError),
-// tslint:disable-next-line: object-literal-sort-keys
-  RangeError: throwError(RangeError),
+  ErrCode: throwError(Error),
 }

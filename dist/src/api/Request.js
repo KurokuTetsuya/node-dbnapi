@@ -26,21 +26,22 @@ if (https_1.default.Agent) {
 class Request {
     /**
      * @constructor
-     * @param {String} url
-     * @param {RequestHeaders} headers
+     * @param {String} url The base URL of REST API, contains the root url for later use.
+     * @param {RequestHeaders} headers The headers that will be sent for each request.
      */
     constructor(url, headers = {}) {
+        this.version = meta.version;
         this.url = url;
-        this.version = meta.default.version;
         if (!headers) {
             headers = {
                 'Content-Type': 'application/json',
-                'User-Agent': 'dbnapi.js/' + this.version,
+                'User-Agent': 'dbnapi/' + this.version,
             };
         }
     }
     /**
      * Creates a POST request.
+     * @method post
      * @param {String} endpoint resolved API Endpoint.
      * @param {JSON} data resolved data to write.
      * @private
@@ -66,6 +67,7 @@ class Request {
     }
     /**
      * Creates a GET request.
+     * @method get
      * @param {String} endpoint resolved API Endpoint.
      * @private
      * @returns {Promise<ResponseGet>}

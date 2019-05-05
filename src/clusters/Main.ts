@@ -2,7 +2,8 @@ import { MainClass } from '../interfaces/IMainClass'
 import { RequestHeaders, IUser, IBot } from '../interfaces/IRequestClass'
 import { Request } from '../api/Request'
 import meta from '../../package.json'
-import { User } from './User';
+import { User } from './User'
+import { Bot } from './Bot'
 
 /**
  * Main module, the source of Discord Bots Nation API workflow.
@@ -42,8 +43,8 @@ export class Main implements MainClass {
   }
 
   /**
-   * Fetch User Information
-   * @param {string} clientID Resolved User Client ID
+   * Fetch User Information.
+   * @param {string} clientID Resolved User Client ID.
    * @public
    * @returns {Promise<any>}
    */
@@ -67,9 +68,9 @@ export class Main implements MainClass {
         createdAt: new Date(body.createdTimestamp.toString()),
         ownedBy: body.ownedBy,
       }
-
-      return new User(userResolved)
+      return new Bot(userResolved)
     }
+
     let userResolved: IUser
     const body: IUser = user
 
@@ -85,13 +86,9 @@ export class Main implements MainClass {
         bot: body.bot,
         createdAt: new Date(body.createdTimestamp.toString()),
         createdTimestamp: body.createdTimestamp,
+        bots: body.bots,
     }
-
-    if (user.bot === true || body.bot === true) { userResolved.ownedBy = body.ownedBy }
-    // tslint:disable-next-line: one-line
-    else { userResolved.bots = body.bots }
-
-    return userResolved
+    return new User(userResolved)
   }
 
   /**

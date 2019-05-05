@@ -1,12 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
- * User resolved module, contains getter and setter for interface {IUser}.
- * @module UserClass
+ * User resolved module, contains getter and setter for interface {IBot}.
+ * @module BotClass
  * @author Riichi_Rusdiana#6815
- * @implements {IUser}
+ * @implements {IBot}
  */
-class User {
+class Bot {
     constructor(usermeta) {
         this.id = usermeta.id;
         this.username = usermeta.username;
@@ -18,8 +18,8 @@ class User {
         this.bot = usermeta.bot;
         this.createdTimestamp = usermeta.createdTimestamp;
         this.createdAt = usermeta.createdAt;
-        this.bots = usermeta.bots;
+        this.ownedBy = usermeta.ownedBy;
     }
 }
-exports.User = User;
-//# sourceMappingURL=User.js.map
+exports.Bot = Bot;
+//# sourceMappingURL=Bot.js.map

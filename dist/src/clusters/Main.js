@@ -5,6 +5,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const Request_1 = require("../api/Request");
 const package_json_1 = __importDefault(require("../../package.json"));
+const User_1 = require("./User");
+const Bot_1 = require("./Bot");
 /**
  * Main module, the source of Discord Bots Nation API workflow.
  * Contains classes that wraps function to access DBN REST API.
@@ -14,8 +16,8 @@ const package_json_1 = __importDefault(require("../../package.json"));
  */
 class Main {
     constructor(token, clientid, ownerid) {
-        this.version = package_json_1.default.default.version;
-        const header = { 'Content-Type': 'application/json', 'User-Agent': `dbnapi.js/${this.version}` };
+        this.version = package_json_1.default.version;
+        const header = { 'Content-Type': 'application/json', 'User-Agent': `dbnapi/${this.version}` };
         this.request = new Request_1.Request('https://discordbots.xyz/api', header);
         this.token = token;
         this.clientid = clientid;
@@ -38,8 +40,8 @@ class Main {
         }
     }
     /**
-     * Fetch User Information
-     * @param {string} clientID Resolved User Client ID
+     * Fetch User Information.
+     * @param {string} clientID Resolved User Client ID.
      * @public
      * @returns {Promise<any>}
      */
@@ -51,7 +53,25 @@ class Main {
         if (user.error === 'unknown_user') {
             return undefined;
         }
-        let userResolved = null;
+        if (user.bot === true) {
+            const body = user;
+            const userResolved = {
+                id: body.id,
+                username: body.username,
+                // tslint:disable-next-line: object-literal-sort-keys
+                discriminator: body.discriminator,
+                tag: body.tag,
+                avatar: body.avatar,
+                avatarURL: body.avatarURL,
+                displayAvatarURL: body.displayAvatarURL,
+                bot: body.bot,
+                createdTimestamp: body.createdTimestamp,
+                createdAt: new Date(body.createdTimestamp.toString()),
+                ownedBy: body.ownedBy,
+            };
+            return new Bot_1.Bot(userResolved);
+        }
+        let userResolved;
         const body = user;
         userResolved = {
             id: body.id,
@@ -63,17 +83,11 @@ class Main {
             avatarURL: body.avatarURL,
             displayAvatarURL: body.displayAvatarURL,
             bot: body.bot,
-            createdAt: new Date(body.createdTimestamp),
+            createdAt: new Date(body.createdTimestamp.toString()),
             createdTimestamp: body.createdTimestamp,
+            bots: body.bots,
         };
-        if (user.bot === true || body.bot === true) {
-            userResolved.ownedBy = body.ownedBy;
-        }
-        // tslint:disable-next-line: one-line
-        else {
-            userResolved.bots = body.bots;
-        }
-        return userResolved;
+        return new User_1.User(userResolved);
     }
     /**
      * Validates Token Session

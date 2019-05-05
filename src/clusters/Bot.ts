@@ -1,12 +1,12 @@
-import { IUser, ArrayBot } from '../interfaces/IRequestClass'
+import { IBot, IUser } from '../interfaces/IRequestClass'
 
 /**
- * User resolved module, contains getter and setter for interface {IUser}.
- * @module UserClass
+ * User resolved module, contains getter and setter for interface {IBot}.
+ * @module BotClass
  * @author Riichi_Rusdiana#6815
- * @implements {IUser}
+ * @implements {IBot}
  */
-export class User implements IUser {
+export class Bot implements IBot {
   public id: String
   public username: String
   public discriminator: String
@@ -17,8 +17,8 @@ export class User implements IUser {
   public bot: Boolean
   public createdTimestamp: Number
   public createdAt: Object
-  public bots?: Array<ArrayBot>
-  constructor(usermeta: IUser) {
+  public ownedBy?: IUser
+  constructor(usermeta: IBot) {
     this.id = usermeta.id
     this.username = usermeta.username
     this.discriminator = usermeta.discriminator
@@ -29,6 +29,6 @@ export class User implements IUser {
     this.bot = usermeta.bot
     this.createdTimestamp = usermeta.createdTimestamp
     this.createdAt = usermeta.createdAt
-    this.bots = usermeta.bots
+    this.ownedBy = usermeta.ownedBy
   }
 }
