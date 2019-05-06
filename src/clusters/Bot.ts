@@ -1,4 +1,4 @@
-import { IBot, IUser } from '../interfaces/IRequestClass'
+import { IBot, IUser, ArrayBot } from '../interfaces/IRequestClass'
 
 /**
  * User resolved module, contains getter and setter for interface {IBot}.
@@ -17,6 +17,7 @@ export class Bot implements IBot {
   public bot: Boolean
   public createdTimestamp: Number
   public createdAt: Object
+  public metadata?: ArrayBot
   public ownedBy?: IUser
   constructor(usermeta: IBot) {
     this.id = usermeta.id
@@ -29,6 +30,11 @@ export class Bot implements IBot {
     this.bot = usermeta.bot
     this.createdTimestamp = usermeta.createdTimestamp
     this.createdAt = usermeta.createdAt
+    this.metadata = usermeta.metadata
     this.ownedBy = usermeta.ownedBy
+  }
+
+  public getMeta(): ArrayBot {
+    return this.metadata as ArrayBot
   }
 }

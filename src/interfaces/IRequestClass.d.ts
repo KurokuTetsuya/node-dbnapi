@@ -57,5 +57,12 @@ export interface IBot {
   bot: Boolean
   createdTimestamp: Number
   createdAt: Object
+  metadata?: ArrayBot
   ownedBy?: IUser
+}
+
+export interface IToken {
+	valid: boolean
+	owned: boolean
+	ownedBy?: IUser
 }

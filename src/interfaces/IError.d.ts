@@ -1,7 +1,7 @@
 import { FetchError } from 'node-fetch'
 
 export interface RequestError {
-  name: string
+  header: string
   code?: string
   errno?: number
 }

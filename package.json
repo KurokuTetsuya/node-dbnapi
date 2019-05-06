@@ -2,18 +2,30 @@
   "name": "node-dbnapi",
   "version": "1.0.0",
   "scripts": {
-    "prepare": "tsc",
     "gulp:lint": "gulp tslint",
     "lint": "npm run gulp:lint -s",
-    "gulp:webpack": "gulp webpack",
-    "webpack": "npm run gulp:webpack -s"
+    "webpack": "rimraf dist && webpack",
+    "docs": "jsdoc2md src/index.ts"
   },
-  "main": "index.js",
+  "main": "dist/index.js",
   "license": "MIT",
+  "author": {
+    "name": "Billy Addlers <Riichi Rusdiana>",
+    "email": "finnsonalca123@gmail.com",
+    "url": "https://j-dev.xyz"
+  },
+  "contributors": [
+    {
+      "name": "Billy Addlers <Riichi Rusdiana>",
+      "email": "finnsonalca123@gmail.com",
+      "url": "https://j-dev.xyz"
+    }
+  ],
   "devDependencies": {
     "@types/node": "^12.0.0",
     "@types/node-fetch": "^2.3.3",
     "chalk": "^2.4.2",
+    "dtsbundler-webpack-plugin": "^1.0.0",
     "gulp": "^4.0.1",
     "gulp-tslint": "^8.1.4",
     "gulp-typescript": "^5.0.1",
@@ -24,7 +36,9 @@
     "tslint": "^5.16.0",
     "tslint-eslint-rules": "^5.4.0",
     "typescript": "^3.4.5",
-    "webpack": "^4.30.0"
+    "webpack": "^4.30.0",
+    "webpack-cli": "^3.3.2",
+    "webpack-node-externals": "^1.7.2"
   },
   "dependencies": {
     "node-fetch": "^2.5.0"

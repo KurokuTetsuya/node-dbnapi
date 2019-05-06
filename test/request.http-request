@@ -1,0 +1,14 @@
+{
+  "body": {
+    "content": "",
+    "file": false,
+    "fileSize": false
+  },
+  "headers": {
+    "content-type": "application/json",
+    "user-agent": "dbnapi/1.0-SNAPSHOT"
+  },
+  "method": "GET",
+  "title": "New HTTP Request",
+  "url": "https://discordbots.xyz/api/bot"
+}

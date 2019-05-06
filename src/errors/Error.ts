@@ -1,25 +1,25 @@
 import { RequestError, ResolvedError } from '../interfaces/IError'
+import CodeProtocol from './CodeList'
 
 const header: string = '[DBNAPI Error]'
-const listOfMessages: Map<String, String> = new Map()
-
-const errnoList = {
-  404: 'Not Found',
-  403: 'Forbidden',
-  401: 'Unauthorized',
-  200: 'OK',
-}
 
 export class ErrCode extends Error implements RequestError {
-  public name: string
+  public header: string
   public code: string
   public errno: number
   constructor(key: String, ...args: Array<String>) {
     const body = messages(key, args)
     super(body.content)
-    this.name = header
+    this.header = header
     this.code = body.content
     this.errno = body.errno
+    this.name = `${this.errno} || ${CodeProtocol(this.errno)}`
+  }
+  get name(): string {
+    return this.name
+  }
+  set name(vari) {
+    throw new Error('"name" is unfathomable!')
   }
 }
 
@@ -34,6 +34,36 @@ function messages(key: String, args: Array<String>): ResolvedError {
         content: messageToFixed('Your token is invalid!') as string,
         errno: 401,
       }
+    case 'NOT_AN_USER':
+      resolved = {
+        content: messageToFixed(`${args[0]} is not a valid User!`) as string,
+        errno: 401,
+      }
+    case 'INVALID_OWNER_ID_NULL':
+      resolved = {
+        content: messageToFixed('Invalid Owner ID!!') as string,
+        errno: 401,
+      }
+    case 'INVALID_CLIENT_ID_NULL':
+      resolved = {
+        content: messageToFixed('Invalid Client ID!!') as string,
+        errno: 401,
+      }
+    case 'INVALID_ID':
+      resolved = {
+        content: messageToFixed(`Cannot find User with ID ${args[0]}`) as string,
+        errno: 401,
+      }
+    case 'NOT_OWNER':
+      resolved = {
+        content: messageToFixed(`You are not Owner of ${args[0]} Bot!`) as string,
+        errno: 401,
+      }
+    case 'NOT_A_BOT':
+      resolved = {
+        content: messageToFixed(`The ${args[0]} ID doesn't belong to any bot`) as string,
+        errno: 401,
+      }
     case 'TEST':
       resolved = {
         content: messageToFixed('This is a test error. Connection is fast and steady!') as string,
@@ -46,8 +76,4 @@ function messages(key: String, args: Array<String>): ResolvedError {
       }
   }
   return resolved
-}
-
-export function register(sym: string, val: string): void {
-  listOfMessages.set(sym, typeof val === 'function' ? val : String(val))
 }

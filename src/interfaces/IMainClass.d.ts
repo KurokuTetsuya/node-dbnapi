@@ -5,5 +5,6 @@ export interface MainClass {
   token: string
 	clientid: string
 	ownerid: string
+	sessionid: string | null
 	version: string
 }
