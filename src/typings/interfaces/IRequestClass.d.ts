@@ -69,3 +69,9 @@ export interface IToken {
 	owned: boolean
 	ownedBy?: IUser
 }
+
+export interface BotsController {
+  body: Object
+  array(): Array<ArrayBot>
+  map(): Map<String, ArrayBot>
+}
