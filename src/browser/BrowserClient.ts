@@ -1,7 +1,9 @@
 import { Agent } from 'https'
 import fetch from 'cross-fetch'
 import { MainClass } from '../typings/interfaces/IMainClass'
-import { RequestClass, RequestHeaders, IToken, IUser, IBot } from '../typings/interfaces/IRequestClass'
+import { RequestClass, RequestHeaders, IToken, IUser, IBot, ArrayBot } from '../typings/interfaces/IRequestClass'
+import { User } from '../clusters/User'
+import { Bot } from '../clusters/Bot'
 import * as Es6Polyfill from 'es6-promise'
 Es6Polyfill.polyfill()
 import meta from '../../package.json'
@@ -56,13 +58,57 @@ export class BrowserClient implements MainClass {
       })
     }
   }
+  public async fetchUser(clientID: string): Promise<IUser | IBot | undefined> {
+    if (!clientID) { throw new Error(`${header} Invalid Client ID!`)}
+    const user: any = await this.request.get(`fetchUser?id=${clientID}`)
+    if (user.error === 'unknown_user') { return undefined }
+    if (user.bot === true) {
+      const meta: any = await this.request.get(`bots/${clientID}`)
+      if (meta.error === 'unknown_user') { return undefined }
+      const metadata: ArrayBot = meta
+      const body: IBot = user
+      const createdUser: IUser = this.constructUser(body.ownedBy as IUser)
+      const userResolved: IBot = {
+        id: body.id,
+        username: body.username,
+        discriminator: body.discriminator,
+        tag: body.tag,
+        avatar: body.avatar,
+        avatarURL: body.avatarURL,
+        displayAvatarURL: body.displayAvatarURL,
+        bot: body.bot,
+        createdTimestamp: body.createdTimestamp,
+        createdAt: new Date(body.createdTimestamp),
+        metadata,
+        ownedBy: new User(createdUser),
+      }
+      return new Bot(userResolved)
+    }
+    const body: IUser = user
+    return new User(this.constructUser(body))
+  }
+  public constructUser(body: IUser): IUser {
+    return {
+      id: body.id,
+      username: body.username,
+      discriminator: body.discriminator,
+      tag: body.tag,
+      avatar: body.avatar,
+      avatarURL: body.avatarURL,
+      displayAvatarURL: body.displayAvatarURL,
+      bot: body.bot,
+      createdAt: new Date(body.createdTimestamp),
+      createdTimestamp: body.createdTimestamp,
+      bots: body.bots,
+    }
+  }
   public async tokenValidator(token: string): Promise<boolean> {
     // tslint:disable-next-line: object-literal-shorthand
     const response: any = await this.request.post('tokenValidator', { token: token })
     const body = response
     if (body.isThatTokenValid === false) { return false } else { return true }
   }
-  private async fetchToken(token: string, clientID: string, ownerID: string): Promise<IToken> {
+  public async fetchToken(token: string, clientID: string, ownerID: string): Promise<IToken> {
     // tslint:disable-next-line: object-literal-shorthand
     const response: any = await this.request.post('fetchToken', { token: token })
     const body = response as IToken
