@@ -4,9 +4,9 @@
 	else if(typeof define === 'function' && define.amd)
 		define([], factory);
 	else if(typeof exports === 'object')
-		exports["Main"] = factory();
+		exports["DBNApi"] = factory();
 	else
-		root["Main"] = factory();
+		root["DBNApi"] = factory();
 })(global, function() {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -139,6 +139,7 @@ class Request {
                 'User-Agent': 'dbnapi/' + this.version,
             };
         }
+        this.headers = headers;
     }
     /**
      * Creates a POST request.
@@ -204,7 +205,7 @@ module.exports = require("https");
 /* 2 */
 /***/ (function(module) {
 
-module.exports = {"name":"node-dbnapi","version":"1.0.0","scripts":{"tsc":"tsc","gulp:lint":"gulp tslint","lint":"npm run gulp:lint -s","webpack":"webpack","docs":"jsdoc2md src/index.ts"},"main":"dist/index.js","license":"MIT","author":{"name":"Billy Addlers <Riichi Rusdiana>","email":"finnsonalca123@gmail.com","url":"https://j-dev.xyz"},"contributors":[{"name":"Billy Addlers <Riichi Rusdiana>","email":"finnsonalca123@gmail.com","url":"https://j-dev.xyz"}],"devDependencies":{"@types/node":"^12.0.0","@types/node-fetch":"^2.3.3","chalk":"^2.4.2","dts-bundle-webpack":"^1.0.2","dts-webpack-bundler":"^1.0.3","dts-webpack-plugin":"^0.0.9","dtsbundler-webpack-plugin":"^1.0.0","gulp":"^4.0.1","gulp-tslint":"^8.1.4","gulp-typescript":"^5.0.1","jsdoc-to-markdown":"^4.0.1","ora":"^3.4.0","rimraf":"^2.6.3","ts-loader":"^5.4.5","tslint":"^5.16.0","tslint-eslint-rules":"^5.4.0","typescript":"^3.4.5","webpack":"^4.30.0","webpack-cli":"^3.3.2","webpack-node-externals":"^1.7.2"},"dependencies":{"node-fetch":"^2.5.0"}};
+module.exports = {"name":"node-dbnapi","description":"An API wrapper for https://discordbots.xyz/api","version":"1.0.0-SNAPSHOT","scripts":{"tsc":"tsc","gulp:lint":"gulp tslint","lint":"npm run gulp:lint -s","webpack":"webpack","webpack:node":"webpack --config webpack.node.js","webpack:browser":"webpack --config webpack.browser.js","webpack:production":"webpack --config webpack.production.js","docs":"jsdoc2md --files ./src/**/*.ts --configure ./docs.json > ./docs/README.md","prepublish":"npm run webpack:production"},"main":"dist/index.js","license":"SEE LICENSE IN LICENSE","author":{"name":"Billy Addlers <Riichi Rusdiana>","email":"finnsonalca123@gmail.com","url":"https://j-dev.xyz"},"contributors":[{"name":"Billy Addlers <Riichi Rusdiana>","email":"finnsonalca123@gmail.com","url":"https://j-dev.xyz"}],"devDependencies":{"@babel/cli":"^7.4.4","@babel/core":"^7.4.4","@babel/plugin-proposal-class-properties":"^7.4.4","@babel/plugin-proposal-object-rest-spread":"^7.4.4","@babel/preset-env":"^7.4.4","@babel/preset-typescript":"^7.3.3","@types/node":"^12.0.0","@types/node-fetch":"^2.3.3","chalk":"^2.4.2","gulp":"^4.0.1","gulp-tslint":"^8.1.4","gulp-typescript":"^5.0.1","jsdoc-babel":"^0.5.0","jsdoc-to-markdown":"^4.0.1","ora":"^3.4.0","rimraf":"^2.6.3","ts-loader":"^5.4.5","tslint":"^5.16.0","tslint-eslint-rules":"^5.4.0","typescript":"^3.4.5","webpack":"^4.30.0","webpack-cli":"^3.3.2","webpack-merge":"^4.2.1","webpack-node-externals":"^1.7.2"},"dependencies":{"cross-fetch":"^3.0.2","es6-promise":"^4.2.6","node-fetch":"^2.5.0"}};
 
 /***/ }),
 /* 3 */
@@ -283,7 +284,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const Main_1 = __webpack_require__(6);
-exports.Main = Main_1.Main;
+exports.Client = Main_1.Client;
 const Request_1 = __webpack_require__(0);
 exports.Request = Request_1.Request;
 const Bot_1 = __webpack_require__(4);
@@ -294,7 +295,7 @@ const http_1 = __importDefault(__webpack_require__(10));
 exports.http = http_1.default;
 const https_1 = __importDefault(__webpack_require__(1));
 exports.https = https_1.default;
-exports.default = Main_1.Main;
+exports.default = Main_1.Client;
 
 
 /***/ }),
@@ -319,7 +320,7 @@ const Error_1 = __webpack_require__(8);
  * @author Riichi_Rusdiana#6815
  * @implements {MainClass}
  */
-class Main {
+class Client {
     /**
      * @constructor
      * @param {string} token The authentication token of your DBN profile.
@@ -329,7 +330,7 @@ class Main {
     constructor(token, clientid, ownerid) {
         this.version = package_json_1.default.version;
         const header = { 'Content-Type': 'application/json', 'User-Agent': `dbnapi/${this.version}` };
-        this.request = new Request_1.Request('https://discordbots.xyz/api', header);
+        this.request = new Request_1.Request('discordbots.xyz', header);
         this.token = token;
         this.clientid = clientid;
         this.ownerid = ownerid;
@@ -360,12 +361,15 @@ class Main {
         if (!clientID) {
             throw new Error_1.ErrCode('INVALID_OWNER_ID_NULL');
         }
-        const { body: user } = await this.request.get(`fetchUser?id=${clientID}`);
+        const user = await this.request.get(`fetchUser?id=${clientID}`);
         if (user.error === 'unknown_user') {
             return undefined;
         }
         if (user.bot === true) {
-            const { body: meta } = await this.request.get(`bots/${clientID}`);
+            const meta = await this.request.get(`bots/${clientID}`);
+            if (meta.error === 'unknown_user') {
+                return undefined;
+            }
             const metadata = meta;
             const body = user;
             const userResolved = {
@@ -378,7 +382,7 @@ class Main {
                 displayAvatarURL: body.displayAvatarURL,
                 bot: body.bot,
                 createdTimestamp: body.createdTimestamp,
-                createdAt: new Date(body.createdTimestamp.toString()),
+                createdAt: new Date(body.createdTimestamp),
                 metadata,
                 ownedBy: body.ownedBy,
             };
@@ -394,7 +398,7 @@ class Main {
             avatarURL: body.avatarURL,
             displayAvatarURL: body.displayAvatarURL,
             bot: body.bot,
-            createdAt: new Date(body.createdTimestamp.toString()),
+            createdAt: new Date(body.createdTimestamp),
             createdTimestamp: body.createdTimestamp,
             bots: body.bots,
         };
@@ -409,7 +413,7 @@ class Main {
     async tokenValidator(token) {
         // tslint:disable-next-line: object-literal-shorthand
         const response = await this.request.post('tokenValidator', { token: token });
-        const body = await response.body;
+        const body = response;
         if (body.isThatTokenValid === false) {
             return false;
         }
@@ -424,7 +428,7 @@ class Main {
      */
     async fetchToken(token, clientID, ownerID) {
         // tslint:disable-next-line: object-literal-shorthand
-        const { body: response } = await this.request.post('fetchToken', { token: token });
+        const response = await this.request.post('fetchToken', { token: token });
         const body = response;
         let ownedBy = body.ownedBy;
         let returns = { valid: body.valid, owned: body.owned, ownedBy };
@@ -439,28 +443,23 @@ class Main {
             ownedBy = undefined;
             return returns = { valid: false, owned: false, ownedBy };
         }
-        const bots = [];
-        ownedBy.bots.forEach((bot) => {
-            bots.push(bot.botID);
-        });
-        if (!bots.includes(clientID)) {
-            const bot = await this.fetchUser(clientID);
-            if (!bot) {
-                throw new Error_1.ErrCode('INVALID_CLIENT_ID_NULL');
-            }
-            if (bot.bot !== true) {
-                throw new Error_1.ErrCode('NOT_A_BOT', clientID);
-            }
-            throw new Error_1.ErrCode('NOT_OWNER', bot.tag);
-        }
-        const ownerUser = await this.fetchUser(ownerID);
-        if (!ownerUser) {
-            throw new Error_1.ErrCode('INVALID_OWNER_ID_NULL');
-        }
+        // MALAH BIKIN ERROR NI LINE, KONTOL!
+        // const bots: Array<string> = []
+        // ownedBy.bots!.forEach((bot: ArrayBot) => {
+        //   bots.push(bot.botID as string)
+        // })
+        // if (!bots.includes(clientID)) {
+        //   const bot = await this.fetchUser(clientID)
+        //   if (!bot) { throw new ErrCode('INVALID_CLIENT_ID_NULL') }
+        //   if (bot.bot !== true) { throw new ErrCode('NOT_A_BOT', clientID) }
+        //   throw new ErrCode('NOT_OWNER', bot.tag)
+        // }
+        // const ownerUser = await this.fetchUser(ownerID)
+        // if (!ownerUser) { throw new ErrCode('INVALID_OWNER_ID_NULL') }
         return returns;
     }
 }
-exports.Main = Main;
+exports.Client = Client;
 
 
 /***/ }),
@@ -490,67 +489,54 @@ class ErrCode extends Error {
         this.errno = body.errno;
         this.name = `${this.errno} || ${CodeList_1.default(this.errno)}`;
     }
-    get name() {
-        return this.name;
-    }
-    set name(vari) {
-        throw new Error('"name" is unfathomable!');
-    }
 }
 exports.ErrCode = ErrCode;
 function messages(key, args) {
     const messageToFixed = (message) => {
         return header + ' ' + message;
     };
-    let resolved;
     switch (key) {
         case 'INVALID_TOKEN':
-            resolved = {
+            return {
                 content: messageToFixed('Your token is invalid!'),
                 errno: 401,
             };
         case 'NOT_AN_USER':
-            resolved = {
+            return {
                 content: messageToFixed(`${args[0]} is not a valid User!`),
                 errno: 401,
             };
         case 'INVALID_OWNER_ID_NULL':
-            resolved = {
+            return {
                 content: messageToFixed('Invalid Owner ID!!'),
                 errno: 401,
             };
         case 'INVALID_CLIENT_ID_NULL':
-            resolved = {
+            return {
                 content: messageToFixed('Invalid Client ID!!'),
                 errno: 401,
             };
         case 'INVALID_ID':
-            resolved = {
+            return {
                 content: messageToFixed(`Cannot find User with ID ${args[0]}`),
                 errno: 401,
             };
         case 'NOT_OWNER':
-            resolved = {
+            return {
                 content: messageToFixed(`You are not Owner of ${args[0]} Bot!`),
                 errno: 401,
             };
         case 'NOT_A_BOT':
-            resolved = {
+            return {
                 content: messageToFixed(`The ${args[0]} ID doesn't belong to any bot`),
                 errno: 401,
             };
         case 'TEST':
-            resolved = {
+            return {
                 content: messageToFixed('This is a test error. Connection is fast and steady!'),
                 errno: 200,
             };
-        default:
-            resolved = {
-                content: messageToFixed('Connection is going on and on!'),
-                errno: 200,
-            };
     }
-    return resolved;
 }
 
 
