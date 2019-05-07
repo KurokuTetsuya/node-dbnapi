@@ -15,7 +15,7 @@ export class User implements IUser {
   public avatarURL: String
   public displayAvatarURL: String
   public bot: Boolean
-  public createdTimestamp: Number
+  public createdTimestamp: number
   public createdAt: Object
   public bots?: Array<ArrayBot>
   constructor(usermeta: IUser) {

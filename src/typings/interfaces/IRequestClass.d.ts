@@ -33,7 +33,7 @@ export interface IUser {
   avatarURL: String
   displayAvatarURL: String
   bot: Boolean
-  createdTimestamp: Number
+  createdTimestamp: number
   createdAt: Object
   bots?: Array<ArrayBot>
 }
@@ -55,7 +55,7 @@ export interface IBot {
   avatarURL: String
   displayAvatarURL: String
   bot: Boolean
-  createdTimestamp: Number
+  createdTimestamp: number
   createdAt: Object
   metadata?: ArrayBot
   ownedBy?: IUser

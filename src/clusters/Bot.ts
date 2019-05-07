@@ -15,7 +15,7 @@ export class Bot implements IBot {
   public avatarURL: String
   public displayAvatarURL: String
   public bot: Boolean
-  public createdTimestamp: Number
+  public createdTimestamp: number
   public createdAt: Object
   public metadata?: ArrayBot
   public ownedBy?: IUser

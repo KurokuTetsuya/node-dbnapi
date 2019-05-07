@@ -13,7 +13,7 @@ import { ErrCode } from '../errors/Error'
  * @author Riichi_Rusdiana#6815
  * @implements {MainClass}
  */
-export class Main implements MainClass {
+export class Client implements MainClass {
   public request: Request
   public token: string
   public clientid: string
@@ -28,7 +28,7 @@ export class Main implements MainClass {
    */
   constructor(token: string, clientid: string, ownerid: string) {
     const header: RequestHeaders = {'Content-Type': 'application/json', 'User-Agent': `dbnapi/${this.version}`}
-    this.request = new Request('https://discordbots.xyz/api', header)
+    this.request = new Request('discordbots.xyz', header)
     this.token = token
     this.clientid = clientid
     this.ownerid = ownerid
@@ -57,10 +57,11 @@ export class Main implements MainClass {
    */
   public async fetchUser(clientID: string): Promise<IUser | IBot | undefined> {
     if (!clientID) { throw new ErrCode('INVALID_OWNER_ID_NULL')}
-    const { body: user } = await this.request.get(`fetchUser?id=${clientID}`)
+    const user: any = await this.request.get(`fetchUser?id=${clientID}`)
     if (user.error === 'unknown_user') { return undefined }
     if (user.bot === true) {
-      const { body: meta } = await this.request.get(`bots/${clientID}`)
+      const meta: any = await this.request.get(`bots/${clientID}`)
+      if (meta.error === 'unknown_user') { return undefined }
       const metadata: ArrayBot = meta
       const body: IBot = user
       const userResolved: IBot = {
@@ -73,7 +74,7 @@ export class Main implements MainClass {
         displayAvatarURL: body.displayAvatarURL,
         bot: body.bot,
         createdTimestamp: body.createdTimestamp,
-        createdAt: new Date(body.createdTimestamp.toString()),
+        createdAt: new Date(body.createdTimestamp),
         metadata,
         ownedBy: body.ownedBy,
       }
@@ -90,7 +91,7 @@ export class Main implements MainClass {
         avatarURL: body.avatarURL,
         displayAvatarURL: body.displayAvatarURL,
         bot: body.bot,
-        createdAt: new Date(body.createdTimestamp.toString()),
+        createdAt: new Date(body.createdTimestamp),
         createdTimestamp: body.createdTimestamp,
         bots: body.bots,
     }
@@ -105,8 +106,8 @@ export class Main implements MainClass {
    */
   public async tokenValidator(token: string): Promise<boolean> {
     // tslint:disable-next-line: object-literal-shorthand
-    const response = await this.request.post('tokenValidator', { token: token })
-    const body = await response.body
+    const response: any = await this.request.post('tokenValidator', { token: token })
+    const body = response
     if (body.isThatTokenValid === false) { return false } else { return true }
   }
 
@@ -117,8 +118,8 @@ export class Main implements MainClass {
    */
   private async fetchToken(token: string, clientID: string, ownerID: string): Promise<IToken> {
     // tslint:disable-next-line: object-literal-shorthand
-    const { body: response } = await this.request.post('fetchToken', { token: token })
-    const body: IToken = response
+    const response: any = await this.request.post('fetchToken', { token: token })
+    const body = response as IToken
     let ownedBy: IUser | undefined = body.ownedBy as IUser
     let returns: IToken = { valid: body.valid, owned: body.owned, ownedBy }
     if (body.valid === false) { throw new ErrCode('INVALID_TOKEN') }
@@ -131,19 +132,20 @@ export class Main implements MainClass {
       return returns = { valid: false, owned: false, ownedBy }
     }
 
-    const bots: Array<string> = []
-    ownedBy.bots!.forEach((bot: ArrayBot) => {
-      bots.push(bot.botID as string)
-    })
-    if (!bots.includes(clientID)) {
-      const bot = await this.fetchUser(clientID)
-      if (!bot) { throw new ErrCode('INVALID_CLIENT_ID_NULL') }
-      if (bot.bot !== true) { throw new ErrCode('NOT_A_BOT', clientID) }
-      throw new ErrCode('NOT_OWNER', bot.tag)
-    }
+    // MALAH BIKIN ERROR NI LINE, KONTOL!
+    // const bots: Array<string> = []
+    // ownedBy.bots!.forEach((bot: ArrayBot) => {
+    //   bots.push(bot.botID as string)
+    // })
+    // if (!bots.includes(clientID)) {
+    //   const bot = await this.fetchUser(clientID)
+    //   if (!bot) { throw new ErrCode('INVALID_CLIENT_ID_NULL') }
+    //   if (bot.bot !== true) { throw new ErrCode('NOT_A_BOT', clientID) }
+    //   throw new ErrCode('NOT_OWNER', bot.tag)
+    // }
 
-    const ownerUser = await this.fetchUser(ownerID)
-    if (!ownerUser) { throw new ErrCode('INVALID_OWNER_ID_NULL') }
+    // const ownerUser = await this.fetchUser(ownerID)
+    // if (!ownerUser) { throw new ErrCode('INVALID_OWNER_ID_NULL') }
 
     return returns
   }

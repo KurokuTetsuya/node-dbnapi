@@ -29,6 +29,7 @@ export class Request implements RequestClass {
         'User-Agent': 'dbnapi/' + this.version,
       }
     }
+    this.headers = headers
   }
 
   /**
