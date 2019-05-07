@@ -20,18 +20,18 @@ export class Bot implements IBot {
   public metadata?: ArrayBot
   public ownedBy?: IUser
   constructor(usermeta: IBot) {
-    this.id = usermeta.id
-    this.username = usermeta.username
-    this.discriminator = usermeta.discriminator
-    this.tag = usermeta.tag
-    this.avatar = usermeta.avatar
-    this.avatarURL = usermeta.avatarURL
-    this.displayAvatarURL = usermeta.displayAvatarURL
-    this.bot = usermeta.bot
-    this.createdTimestamp = usermeta.createdTimestamp
-    this.createdAt = usermeta.createdAt
-    this.metadata = usermeta.metadata
-    this.ownedBy = usermeta.ownedBy
+    this.id                 = usermeta.id
+    this.username           = usermeta.username
+    this.discriminator      = usermeta.discriminator
+    this.tag                = usermeta.tag
+    this.avatar             = usermeta.avatar
+    this.avatarURL          = usermeta.avatarURL
+    this.displayAvatarURL   = usermeta.displayAvatarURL
+    this.bot                = usermeta.bot
+    this.createdTimestamp   = usermeta.createdTimestamp
+    this.createdAt          = usermeta.createdAt
+    this.metadata           = usermeta.metadata
+    this.ownedBy            = usermeta.ownedBy
   }
 
   public getMeta(): ArrayBot {

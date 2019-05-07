@@ -10,10 +10,10 @@ export class ErrCode extends Error implements RequestError {
   constructor(key: String, ...args: Array<String>) {
     const body: ResolvedError = messages(key, args) as ResolvedError
     super(body.content)
-    this.header = header
-    this.code = body.content
-    this.errno = body.errno
-    this.name = `${this.errno} || ${CodeProtocol(this.errno)}`
+    this.header   = header
+    this.code     = body.content
+    this.errno    = body.errno
+    this.name     = `${this.errno} || ${CodeProtocol(this.errno)}`
   }
 }
 
