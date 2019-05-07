@@ -14,7 +14,7 @@ export declare class Bot implements IBot {
     avatarURL: String;
     displayAvatarURL: String;
     bot: Boolean;
-    createdTimestamp: Number;
+    createdTimestamp: number;
     createdAt: Object;
     metadata?: ArrayBot;
     ownedBy?: IUser;

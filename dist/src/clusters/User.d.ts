@@ -14,7 +14,7 @@ export declare class User implements IUser {
     avatarURL: String;
     displayAvatarURL: String;
     bot: Boolean;
-    createdTimestamp: Number;
+    createdTimestamp: number;
     createdAt: Object;
     bots?: Array<ArrayBot>;
     constructor(usermeta: IUser);

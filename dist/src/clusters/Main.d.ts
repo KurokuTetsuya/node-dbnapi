@@ -8,7 +8,7 @@ import { Request } from '../api/Request';
  * @author Riichi_Rusdiana#6815
  * @implements {MainClass}
  */
-export declare class Main implements MainClass {
+export declare class Client implements MainClass {
     request: Request;
     token: string;
     clientid: string;
