@@ -18,5 +18,7 @@ export declare class User implements IUser {
     createdAt: Object;
     bots?: Array<ArrayBot>;
     constructor(usermeta: IUser);
+    getBot(index?: number): Array<ArrayBot> | ArrayBot;
+    getMapBot(indexid?: string): Map<String, ArrayBot> | ArrayBot;
 }
 //# sourceMappingURL=User.d.ts.map

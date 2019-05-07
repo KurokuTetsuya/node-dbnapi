@@ -2468,9 +2468,11 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const https_1 = __webpack_require__(10);
 const cross_fetch_1 = __importDefault(__webpack_require__(19));
-const Es6Polyfill = __importStar(__webpack_require__(20));
+const User_1 = __webpack_require__(20);
+const Bot_1 = __webpack_require__(21);
+const Es6Polyfill = __importStar(__webpack_require__(22));
 Es6Polyfill.polyfill();
-const package_json_1 = __importDefault(__webpack_require__(21));
+const package_json_1 = __importDefault(__webpack_require__(23));
 const header = '[DBNAPI Error]';
 let agent;
 if (https_1.Agent) {
@@ -2542,6 +2544,56 @@ class BrowserClient {
         }
     }
     static getVersion() { return package_json_1.default.version; }
+    async fetchUser(clientID) {
+        if (!clientID) {
+            throw new Error(`${header} Invalid Client ID!`);
+        }
+        const user = await this.request.get(`fetchUser?id=${clientID}`);
+        if (user.error === 'unknown_user') {
+            return undefined;
+        }
+        if (user.bot === true) {
+            const meta = await this.request.get(`bots/${clientID}`);
+            if (meta.error === 'unknown_user') {
+                return undefined;
+            }
+            const metadata = meta;
+            const body = user;
+            const createdUser = this.constructUser(body.ownedBy);
+            const userResolved = {
+                id: body.id,
+                username: body.username,
+                discriminator: body.discriminator,
+                tag: body.tag,
+                avatar: body.avatar,
+                avatarURL: body.avatarURL,
+                displayAvatarURL: body.displayAvatarURL,
+                bot: body.bot,
+                createdTimestamp: body.createdTimestamp,
+                createdAt: new Date(body.createdTimestamp),
+                metadata,
+                ownedBy: new User_1.User(createdUser),
+            };
+            return new Bot_1.Bot(userResolved);
+        }
+        const body = user;
+        return new User_1.User(this.constructUser(body));
+    }
+    constructUser(body) {
+        return {
+            id: body.id,
+            username: body.username,
+            discriminator: body.discriminator,
+            tag: body.tag,
+            avatar: body.avatar,
+            avatarURL: body.avatarURL,
+            displayAvatarURL: body.displayAvatarURL,
+            bot: body.bot,
+            createdAt: new Date(body.createdTimestamp),
+            createdTimestamp: body.createdTimestamp,
+            bots: body.bots,
+        };
+    }
     async tokenValidator(token) {
         // tslint:disable-next-line: object-literal-shorthand
         const response = await this.request.post('tokenValidator', { token: token });
@@ -3082,15 +3134,101 @@ module.exports = require("cross-fetch");
 
 /***/ }),
 /* 20 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * User resolved module, contains getter and setter for interface {IUser}.
+ * @module UserClass
+ * @author Riichi_Rusdiana#6815
+ * @implements {IUser}
+ */
+class User {
+    constructor(usermeta) {
+        this.id = usermeta.id;
+        this.username = usermeta.username;
+        this.discriminator = usermeta.discriminator;
+        this.tag = usermeta.tag;
+        this.avatar = usermeta.avatar;
+        this.avatarURL = usermeta.avatarURL;
+        this.displayAvatarURL = usermeta.displayAvatarURL;
+        this.bot = usermeta.bot;
+        this.createdTimestamp = usermeta.createdTimestamp;
+        this.createdAt = usermeta.createdAt;
+        this.bots = usermeta.bots;
+    }
+    getBot(index) {
+        const bots = new Array();
+        this.bots.forEach((element) => {
+            bots.push(element);
+        });
+        if (index) {
+            return bots[index];
+        }
+        return bots;
+    }
+    getMapBot(indexid) {
+        const bots = new Map();
+        this.bots.forEach((element) => {
+            bots.set(element.botID, element);
+        });
+        if (indexid) {
+            return bots.get(indexid);
+        }
+        return bots;
+    }
+}
+exports.User = User;
+
+
+/***/ }),
+/* 21 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * User resolved module, contains getter and setter for interface {IBot}.
+ * @module BotClass
+ * @author Riichi_Rusdiana#6815
+ * @implements {IBot}
+ */
+class Bot {
+    constructor(usermeta) {
+        this.id = usermeta.id;
+        this.username = usermeta.username;
+        this.discriminator = usermeta.discriminator;
+        this.tag = usermeta.tag;
+        this.avatar = usermeta.avatar;
+        this.avatarURL = usermeta.avatarURL;
+        this.displayAvatarURL = usermeta.displayAvatarURL;
+        this.bot = usermeta.bot;
+        this.createdTimestamp = usermeta.createdTimestamp;
+        this.createdAt = usermeta.createdAt;
+        this.metadata = usermeta.metadata;
+        this.ownedBy = usermeta.ownedBy;
+    }
+    getMeta() {
+        return this.metadata;
+    }
+}
+exports.Bot = Bot;
+
+
+/***/ }),
+/* 22 */
 /***/ (function(module, exports) {
 
 module.exports = require("es6-promise");
 
 /***/ }),
-/* 21 */
+/* 23 */
 /***/ (function(module) {
 
-module.exports = {"name":"node-dbnapi","description":"An API wrapper for https://discordbots.xyz/api","version":"1.0.0-SNAPSHOT","scripts":{"tsc":"tsc","gulp:lint":"gulp tslint","lint":"npm run gulp:lint -s","webpack":"webpack","webpack:node":"webpack --config webpack.node.js","webpack:browser":"webpack --config webpack.browser.js","webpack:production":"webpack --config webpack.production.js","docs":"jsdoc2md --files ./src/**/*.ts --configure ./docs.json > ./docs/README.md","prepublish":"npm run webpack:production"},"main":"dist/index.js","license":"SEE LICENSE IN LICENSE","author":{"name":"Billy Addlers <Riichi Rusdiana>","email":"finnsonalca123@gmail.com","url":"https://j-dev.xyz"},"contributors":[{"name":"Billy Addlers <Riichi Rusdiana>","email":"finnsonalca123@gmail.com","url":"https://j-dev.xyz"}],"devDependencies":{"@babel/cli":"^7.4.4","@babel/core":"^7.4.4","@babel/plugin-proposal-class-properties":"^7.4.4","@babel/plugin-proposal-object-rest-spread":"^7.4.4","@babel/preset-env":"^7.4.4","@babel/preset-typescript":"^7.3.3","@types/node":"^12.0.0","@types/node-fetch":"^2.3.3","chalk":"^2.4.2","gulp":"^4.0.1","gulp-tslint":"^8.1.4","gulp-typescript":"^5.0.1","jsdoc-babel":"^0.5.0","jsdoc-to-markdown":"^4.0.1","ora":"^3.4.0","rimraf":"^2.6.3","ts-loader":"^5.4.5","tslint":"^5.16.0","tslint-eslint-rules":"^5.4.0","typescript":"^3.4.5","webpack":"^4.30.0","webpack-cli":"^3.3.2","webpack-merge":"^4.2.1","webpack-node-externals":"^1.7.2"},"dependencies":{"cross-fetch":"^3.0.2","es6-promise":"^4.2.6","node-fetch":"^2.5.0"}};
+module.exports = {"name":"node-dbnapi","description":"An API wrapper for https://discordbots.xyz/api","version":"1.1.0-SNAPSHOT","scripts":{"tsc":"tsc","gulp:lint":"gulp tslint","lint":"npm run gulp:lint -s","webpack":"webpack","webpack:node":"webpack --config webpack.node.js","webpack:browser":"webpack --config webpack.browser.js","webpack:production":"webpack --config webpack.production.js","docs":"jsdoc2md --files ./src/**/*.ts --configure ./docs.json > ./docs/README.md","prepublish":"npm run webpack:production"},"main":"dist/index.js","license":"SEE LICENSE IN LICENSE","author":{"name":"Billy Addlers <Riichi Rusdiana>","email":"finnsonalca123@gmail.com","url":"https://j-dev.xyz"},"contributors":[{"name":"Billy Addlers <Riichi Rusdiana>","email":"finnsonalca123@gmail.com","url":"https://j-dev.xyz"}],"devDependencies":{"@babel/cli":"^7.4.4","@babel/core":"^7.4.4","@babel/plugin-proposal-class-properties":"^7.4.4","@babel/plugin-proposal-object-rest-spread":"^7.4.4","@babel/preset-env":"^7.4.4","@babel/preset-typescript":"^7.3.3","@types/node":"^12.0.0","@types/node-fetch":"^2.3.3","chalk":"^2.4.2","gulp":"^4.0.1","gulp-tslint":"^8.1.4","gulp-typescript":"^5.0.1","jsdoc-babel":"^0.5.0","jsdoc-to-markdown":"^4.0.1","ora":"^3.4.0","rimraf":"^2.6.3","ts-loader":"^5.4.5","tslint":"^5.16.0","tslint-eslint-rules":"^5.4.0","typescript":"^3.4.5","webpack":"^4.30.0","webpack-cli":"^3.3.2","webpack-merge":"^4.2.1","webpack-node-externals":"^1.7.2"},"dependencies":{"cross-fetch":"^3.0.2","es6-promise":"^4.2.6","node-fetch":"^2.5.0"}};
 
 /***/ })
 /******/ ]);

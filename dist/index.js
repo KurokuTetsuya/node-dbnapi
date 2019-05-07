@@ -205,7 +205,7 @@ module.exports = require("https");
 /* 2 */
 /***/ (function(module) {
 
-module.exports = {"name":"node-dbnapi","description":"An API wrapper for https://discordbots.xyz/api","version":"1.0.0-SNAPSHOT","scripts":{"tsc":"tsc","gulp:lint":"gulp tslint","lint":"npm run gulp:lint -s","webpack":"webpack","webpack:node":"webpack --config webpack.node.js","webpack:browser":"webpack --config webpack.browser.js","webpack:production":"webpack --config webpack.production.js","docs":"jsdoc2md --files ./src/**/*.ts --configure ./docs.json > ./docs/README.md","prepublish":"npm run webpack:production"},"main":"dist/index.js","license":"SEE LICENSE IN LICENSE","author":{"name":"Billy Addlers <Riichi Rusdiana>","email":"finnsonalca123@gmail.com","url":"https://j-dev.xyz"},"contributors":[{"name":"Billy Addlers <Riichi Rusdiana>","email":"finnsonalca123@gmail.com","url":"https://j-dev.xyz"}],"devDependencies":{"@babel/cli":"^7.4.4","@babel/core":"^7.4.4","@babel/plugin-proposal-class-properties":"^7.4.4","@babel/plugin-proposal-object-rest-spread":"^7.4.4","@babel/preset-env":"^7.4.4","@babel/preset-typescript":"^7.3.3","@types/node":"^12.0.0","@types/node-fetch":"^2.3.3","chalk":"^2.4.2","gulp":"^4.0.1","gulp-tslint":"^8.1.4","gulp-typescript":"^5.0.1","jsdoc-babel":"^0.5.0","jsdoc-to-markdown":"^4.0.1","ora":"^3.4.0","rimraf":"^2.6.3","ts-loader":"^5.4.5","tslint":"^5.16.0","tslint-eslint-rules":"^5.4.0","typescript":"^3.4.5","webpack":"^4.30.0","webpack-cli":"^3.3.2","webpack-merge":"^4.2.1","webpack-node-externals":"^1.7.2"},"dependencies":{"cross-fetch":"^3.0.2","es6-promise":"^4.2.6","node-fetch":"^2.5.0"}};
+module.exports = {"name":"node-dbnapi","description":"An API wrapper for https://discordbots.xyz/api","version":"1.1.0-SNAPSHOT","scripts":{"tsc":"tsc","gulp:lint":"gulp tslint","lint":"npm run gulp:lint -s","webpack":"webpack","webpack:node":"webpack --config webpack.node.js","webpack:browser":"webpack --config webpack.browser.js","webpack:production":"webpack --config webpack.production.js","docs":"jsdoc2md --files ./src/**/*.ts --configure ./docs.json > ./docs/README.md","prepublish":"npm run webpack:production"},"main":"dist/index.js","license":"SEE LICENSE IN LICENSE","author":{"name":"Billy Addlers <Riichi Rusdiana>","email":"finnsonalca123@gmail.com","url":"https://j-dev.xyz"},"contributors":[{"name":"Billy Addlers <Riichi Rusdiana>","email":"finnsonalca123@gmail.com","url":"https://j-dev.xyz"}],"devDependencies":{"@babel/cli":"^7.4.4","@babel/core":"^7.4.4","@babel/plugin-proposal-class-properties":"^7.4.4","@babel/plugin-proposal-object-rest-spread":"^7.4.4","@babel/preset-env":"^7.4.4","@babel/preset-typescript":"^7.3.3","@types/node":"^12.0.0","@types/node-fetch":"^2.3.3","chalk":"^2.4.2","gulp":"^4.0.1","gulp-tslint":"^8.1.4","gulp-typescript":"^5.0.1","jsdoc-babel":"^0.5.0","jsdoc-to-markdown":"^4.0.1","ora":"^3.4.0","rimraf":"^2.6.3","ts-loader":"^5.4.5","tslint":"^5.16.0","tslint-eslint-rules":"^5.4.0","typescript":"^3.4.5","webpack":"^4.30.0","webpack-cli":"^3.3.2","webpack-merge":"^4.2.1","webpack-node-externals":"^1.7.2"},"dependencies":{"cross-fetch":"^3.0.2","es6-promise":"^4.2.6","node-fetch":"^2.5.0"}};
 
 /***/ }),
 /* 3 */
@@ -233,6 +233,26 @@ class User {
         this.createdTimestamp = usermeta.createdTimestamp;
         this.createdAt = usermeta.createdAt;
         this.bots = usermeta.bots;
+    }
+    getBot(index) {
+        const bots = new Array();
+        this.bots.forEach((element) => {
+            bots.push(element);
+        });
+        if (index) {
+            return bots[index];
+        }
+        return bots;
+    }
+    getMapBot(indexid) {
+        const bots = new Map();
+        this.bots.forEach((element) => {
+            bots.set(element.botID, element);
+        });
+        if (indexid) {
+            return bots.get(indexid);
+        }
+        return bots;
     }
 }
 exports.User = User;
@@ -283,8 +303,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const Main_1 = __webpack_require__(6);
-exports.Client = Main_1.Client;
+const Client_1 = __webpack_require__(6);
+exports.Client = Client_1.Client;
 const Request_1 = __webpack_require__(0);
 exports.Request = Request_1.Request;
 const Bot_1 = __webpack_require__(4);
@@ -295,7 +315,7 @@ const http_1 = __importDefault(__webpack_require__(10));
 exports.http = http_1.default;
 const https_1 = __importDefault(__webpack_require__(1));
 exports.https = https_1.default;
-exports.default = Main_1.Client;
+exports.default = Client_1.Client;
 
 
 /***/ }),
@@ -316,7 +336,7 @@ const Error_1 = __webpack_require__(8);
 /**
  * Main module, the source of Discord Bots Nation API workflow.
  * Contains classes that wraps function to access DBN REST API.
- * @module Main
+ * @module Client
  * @author Riichi_Rusdiana#6815
  * @implements {MainClass}
  */
@@ -372,6 +392,7 @@ class Client {
             }
             const metadata = meta;
             const body = user;
+            const createdUser = this.constructUser(body.ownedBy);
             const userResolved = {
                 id: body.id,
                 username: body.username,
@@ -384,12 +405,15 @@ class Client {
                 createdTimestamp: body.createdTimestamp,
                 createdAt: new Date(body.createdTimestamp),
                 metadata,
-                ownedBy: body.ownedBy,
+                ownedBy: new User_1.User(createdUser),
             };
             return new Bot_1.Bot(userResolved);
         }
         const body = user;
-        const userResolved = {
+        return new User_1.User(this.constructUser(body));
+    }
+    constructUser(body) {
+        return {
             id: body.id,
             username: body.username,
             discriminator: body.discriminator,
@@ -402,7 +426,6 @@ class Client {
             createdTimestamp: body.createdTimestamp,
             bots: body.bots,
         };
-        return new User_1.User(userResolved);
     }
     /**
      * Validates Token Session.
