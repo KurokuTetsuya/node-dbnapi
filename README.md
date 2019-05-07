@@ -32,7 +32,7 @@ For Browser via CDN
 Take a look at [releases](https://github.com/discordbotsNation/node-dbnapi/releases) section for a singleton file.
 
 ## Compatibility
-Node-DBNApi is compatible with Node version 8.x and latest. The browser version of node-dbnapi able to run in an environment that support Promises. `IE<9` or below will most likely won't be able to run node-dbnapi, due to reserved conflict.
+node-dbnapi is compatible with Node version 8.x and latest. The browser version of node-dbnapi able to run in an environment that support Promises. `IE<9` or below will most likely won't be able to run node-dbnapi, due to reserved conflict.
 
 > ⚠️ Warning: If you're in an environment that doesn't support Promises such as Internet Explorer, you must install an ES6 Promise compatible polyfill. [es6-promise](https://github.com/stefanpenner/es6-promise) is suggested.
 
