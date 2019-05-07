@@ -1,20 +1,13 @@
 'use strict'
 
 const webpack = require('webpack')
+const merge = require('webpack-merge')
 const path = require('path')
 const nodeExternals = require('webpack-node-externals')
 const os = require('os')
 const meta = require('./package.json')
 
 const config = {
-	entry: './src/index.ts',
-	target: 'node',
-  output: {
-    path: path.resolve(__dirname, 'dist'),
-    filename: 'index.js',
-    library: 'Main',
-    libraryTarget: 'umd'
-  },
   externals: [ nodeExternals() ],
   plugins: [],
   module: {
