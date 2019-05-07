@@ -36,6 +36,8 @@ export interface IUser {
   createdTimestamp: number
   createdAt: Object
   bots?: Array<ArrayBot>
+  getBot?(index?: number): Array<ArrayBot> | ArrayBot
+  getMapBot?(indexid?: string): Map<String, ArrayBot> | ArrayBot
 }
 
 export interface ArrayBot {
@@ -59,6 +61,7 @@ export interface IBot {
   createdAt: Object
   metadata?: ArrayBot
   ownedBy?: IUser
+  getMeta?(): ArrayBot
 }
 
 export interface IToken {

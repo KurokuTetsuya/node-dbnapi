@@ -1,4 +1,4 @@
-import { Client } from './clusters/Main'
+import { Client } from './clusters/Client'
 import { Request } from './api/Request'
 import { Bot } from './clusters/Bot'
 import { User } from './clusters/User'

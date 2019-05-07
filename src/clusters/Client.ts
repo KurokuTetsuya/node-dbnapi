@@ -9,30 +9,32 @@ import { ErrCode } from '../errors/Error'
 /**
  * Main module, the source of Discord Bots Nation API workflow.
  * Contains classes that wraps function to access DBN REST API.
- * @module Main
+ * @module Client
  * @author Riichi_Rusdiana#6815
  * @implements {MainClass}
  */
 export class Client implements MainClass {
   public request: Request
-  public token: string
   public clientid: string
   public ownerid: string
   public sessionid: string | null
   public version: string = meta.version
+  private token: string
   /**
    * @constructor
    * @param {string} token The authentication token of your DBN profile.
    * @param {string} clientid The valid registered Discord Client Application ID.
    * @param {string} ownerid The valid registered Owner ID.
    */
-  constructor(token: string, clientid: string, ownerid: string) {
+  constructor(token: string,
+              clientid: string,
+              ownerid: string) {
     const header: RequestHeaders = {'Content-Type': 'application/json', 'User-Agent': `dbnapi/${this.version}`}
-    this.request = new Request('discordbots.xyz', header)
-    this.token = token
-    this.clientid = clientid
-    this.ownerid = ownerid
-    this.sessionid = null
+    this.request    = new Request('discordbots.xyz', header)
+    this.token      = token
+    this.clientid   = clientid
+    this.ownerid    = ownerid
+    this.sessionid  = null
     if (token || token !== undefined || token !== '') {
       this.tokenValidator(token).then((valid) => {
         if (valid === false) {
@@ -64,38 +66,42 @@ export class Client implements MainClass {
       if (meta.error === 'unknown_user') { return undefined }
       const metadata: ArrayBot = meta
       const body: IBot = user
+      const createdUser: IUser = this.constructUser(body.ownedBy as IUser)
       const userResolved: IBot = {
-        id: body.id,
-        username: body.username,
-        discriminator: body.discriminator,
-        tag: body.tag,
-        avatar: body.avatar,
-        avatarURL: body.avatarURL,
-        displayAvatarURL: body.displayAvatarURL,
-        bot: body.bot,
-        createdTimestamp: body.createdTimestamp,
-        createdAt: new Date(body.createdTimestamp),
+        id:                 body.id,
+        username:           body.username,
+        discriminator:      body.discriminator,
+        tag:                body.tag,
+        avatar:             body.avatar,
+        avatarURL:          body.avatarURL,
+        displayAvatarURL:   body.displayAvatarURL,
+        bot:                body.bot,
+        createdTimestamp:   body.createdTimestamp,
+        createdAt:          new Date(body.createdTimestamp),
         metadata,
-        ownedBy: body.ownedBy,
+        ownedBy:            new User(createdUser),
       }
       return new Bot(userResolved)
     }
 
     const body: IUser = user
-    const userResolved: IUser = {
-        id: body.id,
-        username: body.username,
-        discriminator: body.discriminator,
-        tag: body.tag,
-        avatar: body.avatar,
-        avatarURL: body.avatarURL,
-        displayAvatarURL: body.displayAvatarURL,
-        bot: body.bot,
-        createdAt: new Date(body.createdTimestamp),
-        createdTimestamp: body.createdTimestamp,
-        bots: body.bots,
+    return new User(this.constructUser(body))
+  }
+
+  public constructUser(body: IUser): IUser {
+    return {
+      id:                 body.id,
+      username:           body.username,
+      discriminator:      body.discriminator,
+      tag:                body.tag,
+      avatar:             body.avatar,
+      avatarURL:          body.avatarURL,
+      displayAvatarURL:   body.displayAvatarURL,
+      bot:                body.bot,
+      createdAt:          new Date(body.createdTimestamp),
+      createdTimestamp:   body.createdTimestamp,
+      bots:               body.bots,
     }
-    return new User(userResolved)
   }
 
   /**
@@ -116,7 +122,7 @@ export class Client implements MainClass {
    * @private
    * @returns {Promise}
    */
-  private async fetchToken(token: string, clientID: string, ownerID: string): Promise<IToken> {
+  public async fetchToken(token: string, clientID: string, ownerID: string): Promise<IToken> {
     // tslint:disable-next-line: object-literal-shorthand
     const response: any = await this.request.post('fetchToken', { token: token })
     const body = response as IToken
