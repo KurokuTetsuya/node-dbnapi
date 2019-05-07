@@ -1,15 +1,20 @@
 {
   "name": "node-dbnapi",
-  "version": "1.0.0",
+  "description": "An API wrapper for https://discordbots.xyz/api",
+  "version": "1.0.0-SNAPSHOT",
   "scripts": {
     "tsc": "tsc",
     "gulp:lint": "gulp tslint",
     "lint": "npm run gulp:lint -s",
     "webpack": "webpack",
-    "docs": "jsdoc2md src/index.ts"
+    "webpack:node": "webpack --config webpack.node.js",
+    "webpack:browser": "webpack --config webpack.browser.js",
+    "webpack:production": "webpack --config webpack.production.js",
+    "docs": "jsdoc2md --files ./src/**/*.ts --configure ./docs.json > ./docs/README.md",
+    "prepublish": "npm run webpack:production"
   },
   "main": "dist/index.js",
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE",
   "author": {
     "name": "Billy Addlers <Riichi Rusdiana>",
     "email": "finnsonalca123@gmail.com",
@@ -23,16 +28,19 @@
     }
   ],
   "devDependencies": {
+    "@babel/cli": "^7.4.4",
+    "@babel/core": "^7.4.4",
+    "@babel/plugin-proposal-class-properties": "^7.4.4",
+    "@babel/plugin-proposal-object-rest-spread": "^7.4.4",
+    "@babel/preset-env": "^7.4.4",
+    "@babel/preset-typescript": "^7.3.3",
     "@types/node": "^12.0.0",
     "@types/node-fetch": "^2.3.3",
     "chalk": "^2.4.2",
-    "dts-bundle-webpack": "^1.0.2",
-    "dts-webpack-bundler": "^1.0.3",
-    "dts-webpack-plugin": "^0.0.9",
-    "dtsbundler-webpack-plugin": "^1.0.0",
     "gulp": "^4.0.1",
     "gulp-tslint": "^8.1.4",
     "gulp-typescript": "^5.0.1",
+    "jsdoc-babel": "^0.5.0",
     "jsdoc-to-markdown": "^4.0.1",
     "ora": "^3.4.0",
     "rimraf": "^2.6.3",
@@ -42,9 +50,12 @@
     "typescript": "^3.4.5",
     "webpack": "^4.30.0",
     "webpack-cli": "^3.3.2",
+    "webpack-merge": "^4.2.1",
     "webpack-node-externals": "^1.7.2"
   },
   "dependencies": {
+    "cross-fetch": "^3.0.2",
+    "es6-promise": "^4.2.6",
     "node-fetch": "^2.5.0"
   }
 }

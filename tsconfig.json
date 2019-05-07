@@ -6,6 +6,7 @@
     "sourceRoot": "./src",
     "declaration": true,
     "declarationDir": "./dist",
+    "declarationMap": true,
     "strict": true,
     "sourceMap": true,
     "noImplicitAny": true,
@@ -17,6 +18,7 @@
       "./src/typings/interfaces"
     ]
   },
+  "jsdoc": "docs",
   "exclude": [
     "./dist/*",
     "./node_modules/*",
