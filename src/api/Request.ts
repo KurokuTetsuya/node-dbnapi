@@ -1,6 +1,6 @@
 import https from 'https'
 import fetch from 'node-fetch'
-import { RequestClass, ResponseGet, ResponsePost, RequestHeaders } from '../interfaces/IRequestClass'
+import { RequestClass, ResponseGet, ResponsePost, RequestHeaders } from '../typings/interfaces/IRequestClass'
 import * as meta from '../../package.json'
 
 let agent: https.Agent

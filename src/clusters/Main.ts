@@ -1,5 +1,5 @@
-import { MainClass } from '../interfaces/IMainClass'
-import { RequestHeaders, IUser, IBot, IToken, ArrayBot } from '../interfaces/IRequestClass'
+import { MainClass } from '../typings/interfaces/IMainClass'
+import { RequestHeaders, IUser, IBot, IToken, ArrayBot } from '../typings/interfaces/IRequestClass'
 import { Request } from '../api/Request'
 import meta from '../../package.json'
 import { User } from './User'

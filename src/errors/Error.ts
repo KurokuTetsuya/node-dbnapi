@@ -1,4 +1,4 @@
-import { RequestError, ResolvedError } from '../interfaces/IError'
+import { RequestError, ResolvedError } from '../typings/interfaces/IError'
 import CodeProtocol from './CodeList'
 
 const header: string = '[DBNAPI Error]'

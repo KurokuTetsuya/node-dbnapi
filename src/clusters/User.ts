@@ -1,4 +1,4 @@
-import { IUser, ArrayBot } from '../interfaces/IRequestClass'
+import { IUser, ArrayBot } from '../typings/interfaces/IRequestClass'
 
 /**
  * User resolved module, contains getter and setter for interface {IUser}.

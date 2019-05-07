@@ -5,6 +5,7 @@
     "outDir": "./dist",
     "rootDir": "./",
     "declaration": false,
+    "declarationDir": "./",
     "strict": true,
     "sourceMap": true,
     "noImplicitAny": true,
@@ -13,7 +14,7 @@
     "resolveJsonModule": true,
     "typeRoots": [
       "./node_modules/@types",
-      "./src/typings"
+      "./src/typings/interfaces"
     ]
   },
   "exclude": [
