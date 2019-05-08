@@ -1,5 +1,5 @@
-import { Agent } from 'https'
 import fetch from 'cross-fetch'
+import { Agent } from 'https'
 import { MainClass } from '../typings/interfaces/IMainClass'
 import { RequestClass, RequestHeaders, IToken, IUser, IBot, ArrayBot } from '../typings/interfaces/IRequestClass'
 import { User } from '../clusters/User'
@@ -56,6 +56,27 @@ export class BrowserClient implements MainClass {
           })}
         }
       })
+    }
+  }
+  // tslint:disable-next-line: max-line-length
+  public async bots(index?: number): Promise<import('../typings/interfaces/IRequestClass').BotsController | ArrayBot> {
+    const response: any = await this.request.get('bots')
+    response.Array = await this.request.get('botsArray')
+    const body = response
+    if (index) {
+      if (index.toString().length > 4) { return body[index] as ArrayBot }
+      return body.Array[index] as ArrayBot
+    }
+    return {
+      body,
+      array: () => body.Array as Array<ArrayBot>,
+      map: () => {
+        const resolved: Map < String, ArrayBot > = new Map()
+        body.Array.forEach((element: ArrayBot) => {
+          resolved.set(element.botID, element)
+        })
+        return resolved
+      },
     }
   }
   public async fetchUser(clientID: string): Promise<IUser | IBot | undefined> {

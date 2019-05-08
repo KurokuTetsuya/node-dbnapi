@@ -1,5 +1,5 @@
 import { MainClass } from '../typings/interfaces/IMainClass'
-import { RequestHeaders, IUser, IBot, IToken, ArrayBot } from '../typings/interfaces/IRequestClass'
+import { RequestHeaders, IUser, IBot, IToken, ArrayBot, BotsController } from '../typings/interfaces/IRequestClass'
 import { Request } from '../api/Request'
 import meta from '../../package.json'
 import { User } from './User'
@@ -19,7 +19,6 @@ export class Client implements MainClass {
   public ownerid: string
   public sessionid: string | null
   public version: string = meta.version
-  private token: string
   /**
    * @constructor
    * @param {string} token The authentication token of your DBN profile.
@@ -31,7 +30,6 @@ export class Client implements MainClass {
               ownerid: string) {
     const header: RequestHeaders = {'Content-Type': 'application/json', 'User-Agent': `dbnapi/${this.version}`}
     this.request    = new Request('discordbots.xyz', header)
-    this.token      = token
     this.clientid   = clientid
     this.ownerid    = ownerid
     this.sessionid  = null
@@ -55,7 +53,7 @@ export class Client implements MainClass {
    * Fetch User Information.
    * @param {string} clientID Resolved User Client ID.
    * @public
-   * @returns {Promise<any>}
+   * @returns {Promise<IUser | IBot>}
    */
   public async fetchUser(clientID: string): Promise<IUser | IBot | undefined> {
     if (!clientID) { throw new ErrCode('INVALID_OWNER_ID_NULL')}
@@ -105,10 +103,41 @@ export class Client implements MainClass {
   }
 
   /**
+   * Fetch list of bots registered to DiscordBotsNation.
+   * @method bots
+   * @param {string} index The index number of bot. Use id for precise fetch. Empty to do a full fetch.
+   * @returns {Promise<BotsController>}
+   */
+  public async bots(index?: number): Promise<BotsController | ArrayBot> {
+    const response: any = await this.request.get('bots')
+    response.Array = await this.request.get('botsArray')
+    const body = response
+    if (index) {
+      if (index.toString().length > 4) {
+        return body[index] as ArrayBot
+      }
+      return body.Array[index] as ArrayBot
+    }
+    return {
+      body,
+      array: () => {
+        return body.Array as Array<ArrayBot>
+      },
+      map: () => {
+        const resolved: Map<String, ArrayBot> = new Map()
+        body.Array.forEach((element: ArrayBot) => {
+          resolved.set(element.botID, element)
+        })
+        return resolved
+      },
+    }
+  }
+
+  /**
    * Validates Token Session.
    * @param {string} token The string token to validate.
    * @private
-   * @returns {boolean}
+   * @returns {Promise<Boolean>}
    */
   public async tokenValidator(token: string): Promise<boolean> {
     // tslint:disable-next-line: object-literal-shorthand
@@ -119,8 +148,8 @@ export class Client implements MainClass {
 
   /**
    * Fetch Token Session.
-   * @private
-   * @returns {Promise}
+   * @public
+   * @returns {Promise<IToken>}
    */
   public async fetchToken(token: string, clientID: string, ownerID: string): Promise<IToken> {
     // tslint:disable-next-line: object-literal-shorthand
@@ -137,22 +166,6 @@ export class Client implements MainClass {
       ownedBy = undefined
       return returns = { valid: false, owned: false, ownedBy }
     }
-
-    // MALAH BIKIN ERROR NI LINE, KONTOL!
-    // const bots: Array<string> = []
-    // ownedBy.bots!.forEach((bot: ArrayBot) => {
-    //   bots.push(bot.botID as string)
-    // })
-    // if (!bots.includes(clientID)) {
-    //   const bot = await this.fetchUser(clientID)
-    //   if (!bot) { throw new ErrCode('INVALID_CLIENT_ID_NULL') }
-    //   if (bot.bot !== true) { throw new ErrCode('NOT_A_BOT', clientID) }
-    //   throw new ErrCode('NOT_OWNER', bot.tag)
-    // }
-
-    // const ownerUser = await this.fetchUser(ownerID)
-    // if (!ownerUser) { throw new ErrCode('INVALID_OWNER_ID_NULL') }
-
     return returns
   }
 }
