@@ -351,7 +351,6 @@ class Client {
         this.version = package_json_1.default.version;
         const header = { 'Content-Type': 'application/json', 'User-Agent': `dbnapi/${this.version}` };
         this.request = new Request_1.Request('discordbots.xyz', header);
-        this.token = token;
         this.clientid = clientid;
         this.ownerid = ownerid;
         this.sessionid = null;
@@ -375,7 +374,7 @@ class Client {
      * Fetch User Information.
      * @param {string} clientID Resolved User Client ID.
      * @public
-     * @returns {Promise<any>}
+     * @returns {Promise<IUser | IBot>}
      */
     async fetchUser(clientID) {
         if (!clientID) {
@@ -428,10 +427,40 @@ class Client {
         };
     }
     /**
+     * Fetch list of bots registered to DiscordBotsNation.
+     * @method bots
+     * @param {string} index The index number of bot. Use id for precise fetch. Empty to do a full fetch.
+     * @returns {Promise<BotsController>}
+     */
+    async bots(index) {
+        const response = await this.request.get('bots');
+        response.Array = await this.request.get('botsArray');
+        const body = response;
+        if (index) {
+            if (index.toString().length > 4) {
+                return body[index];
+            }
+            return body.Array[index];
+        }
+        return {
+            body,
+            array: () => {
+                return body.Array;
+            },
+            map: () => {
+                const resolved = new Map();
+                body.Array.forEach((element) => {
+                    resolved.set(element.botID, element);
+                });
+                return resolved;
+            },
+        };
+    }
+    /**
      * Validates Token Session.
      * @param {string} token The string token to validate.
      * @private
-     * @returns {boolean}
+     * @returns {Promise<Boolean>}
      */
     async tokenValidator(token) {
         // tslint:disable-next-line: object-literal-shorthand
@@ -446,8 +475,8 @@ class Client {
     }
     /**
      * Fetch Token Session.
-     * @private
-     * @returns {Promise}
+     * @public
+     * @returns {Promise<IToken>}
      */
     async fetchToken(token, clientID, ownerID) {
         // tslint:disable-next-line: object-literal-shorthand
@@ -466,19 +495,6 @@ class Client {
             ownedBy = undefined;
             return returns = { valid: false, owned: false, ownedBy };
         }
-        // MALAH BIKIN ERROR NI LINE, KONTOL!
-        // const bots: Array<string> = []
-        // ownedBy.bots!.forEach((bot: ArrayBot) => {
-        //   bots.push(bot.botID as string)
-        // })
-        // if (!bots.includes(clientID)) {
-        //   const bot = await this.fetchUser(clientID)
-        //   if (!bot) { throw new ErrCode('INVALID_CLIENT_ID_NULL') }
-        //   if (bot.bot !== true) { throw new ErrCode('NOT_A_BOT', clientID) }
-        //   throw new ErrCode('NOT_OWNER', bot.tag)
-        // }
-        // const ownerUser = await this.fetchUser(ownerID)
-        // if (!ownerUser) { throw new ErrCode('INVALID_OWNER_ID_NULL') }
         return returns;
     }
 }

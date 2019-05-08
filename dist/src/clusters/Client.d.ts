@@ -1,5 +1,5 @@
 import { MainClass } from '../typings/interfaces/IMainClass';
-import { IUser, IBot, IToken } from '../typings/interfaces/IRequestClass';
+import { IUser, IBot, IToken, ArrayBot, BotsController } from '../typings/interfaces/IRequestClass';
 import { Request } from '../api/Request';
 /**
  * Main module, the source of Discord Bots Nation API workflow.
@@ -14,7 +14,6 @@ export declare class Client implements MainClass {
     ownerid: string;
     sessionid: string | null;
     version: string;
-    private token;
     /**
      * @constructor
      * @param {string} token The authentication token of your DBN profile.
@@ -26,21 +25,28 @@ export declare class Client implements MainClass {
      * Fetch User Information.
      * @param {string} clientID Resolved User Client ID.
      * @public
-     * @returns {Promise<any>}
+     * @returns {Promise<IUser | IBot>}
      */
     fetchUser(clientID: string): Promise<IUser | IBot | undefined>;
     constructUser(body: IUser): IUser;
     /**
+     * Fetch list of bots registered to DiscordBotsNation.
+     * @method bots
+     * @param {string} index The index number of bot. Use id for precise fetch. Empty to do a full fetch.
+     * @returns {Promise<BotsController>}
+     */
+    bots(index?: number): Promise<BotsController | ArrayBot>;
+    /**
      * Validates Token Session.
      * @param {string} token The string token to validate.
      * @private
-     * @returns {boolean}
+     * @returns {Promise<Boolean>}
      */
     tokenValidator(token: string): Promise<boolean>;
     /**
      * Fetch Token Session.
-     * @private
-     * @returns {Promise}
+     * @public
+     * @returns {Promise<IToken>}
      */
     fetchToken(token: string, clientID: string, ownerID: string): Promise<IToken>;
 }

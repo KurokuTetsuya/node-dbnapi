@@ -2544,6 +2544,29 @@ class BrowserClient {
         }
     }
     static getVersion() { return package_json_1.default.version; }
+    // tslint:disable-next-line: max-line-length
+    async bots(index) {
+        const response = await this.request.get('bots');
+        response.Array = await this.request.get('botsArray');
+        const body = response;
+        if (index) {
+            if (index.toString().length > 4) {
+                return body[index];
+            }
+            return body.Array[index];
+        }
+        return {
+            body,
+            array: () => body.Array,
+            map: () => {
+                const resolved = new Map();
+                body.Array.forEach((element) => {
+                    resolved.set(element.botID, element);
+                });
+                return resolved;
+            },
+        };
+    }
     async fetchUser(clientID) {
         if (!clientID) {
             throw new Error(`${header} Invalid Client ID!`);
